@@ -8,6 +8,9 @@ CITY_DATA = {'chicago': 'chicago.csv',
 
 #added comment for git
 #another comment for git
+
+#added for refactoring 
+#another for refactoring
 def get_filters():
     """
     Asks user to specify a city, month, and day to analyze.
