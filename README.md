@@ -1,4 +1,6 @@
 This repository contains projects for Udacity Programming For Data Science.
+
+
 Project 1
 Overview
 This project consisted in the exploration of a provided database movie rentals in which the student had to run SQL queries and build visualizations to showcase the output of the student's queries.
