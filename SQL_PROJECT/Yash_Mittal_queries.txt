@@ -1,0 +1,120 @@
+/* Query 1:- type of movie rented out most from the store */
+
+
+SELECT
+  c.name AS Category,
+  COUNT(*) AS Total
+FROM category c
+JOIN film_category fc
+  ON c.category_id = fc.category_id
+JOIN film f
+  ON fc.film_id = f.film_id
+JOIN inventory i
+  ON f.film_id = i.film_id
+JOIN rental r
+  ON i.inventory_id = r.inventory_id
+GROUP BY 1
+ORDER BY 2 DESC;
+
+..........................................................................................................
+
+
+
+
+
+/* Query 2:- who was the Highest paying customer from february to may in 2017? */
+
+
+
+WITH t1 as(SELECT first_name||' '||last_name as full,c.customer_id,p.amount,p.payment_date
+FROM customer c
+JOIN payment p
+ON c.customer_id=p.customer_id),
+
+  t2 as(SELECT t1.customer_id,SUM(t1.amount) as total
+        FROM t1
+        GROUP BY 1
+        ORDER BY 2 desc)
+
+SELECT t1.full,DATE_PART('month',t1.payment_date) as month,count(*) as counting,SUM(t1.amount) as total
+FROM t1
+JOIN t2
+ON t1.customer_id=t2.customer_id
+GROUP BY 1,2
+HAVING date_part('month',t1.payment_date)>=2 AND DATE_PART('month',t1.payment_date)<=5
+ORDER BY 4 DESC
+LIMIT 10;
+
+
+
+
+
+...........................................................................................................
+
+
+
+
+
+/* Query 3:- How many rented film were return on time,late and early? */
+
+
+
+
+WITH t1
+AS (SELECT
+  f.rental_duration AS duration,
+  DATE_PART('day', r.return_date - r.rental_date) AS day_difference
+FROM rental r
+JOIN inventory i
+  ON r.inventory_id = i.inventory_id
+JOIN film f
+  ON i.film_id = f.film_id),
+
+t2
+AS (SELECT
+  CASE
+    WHEN t1.duration > t1.day_difference THEN 'Returned Early'
+    WHEN t1.duration = t1.day_difference THEN 'Returned on Time'
+    ELSE 'Returned Late'
+  END AS Return_Status
+FROM t1)
+SELECT
+  Return_Status,
+  COUNT(*) AS total
+FROM t2
+GROUP BY 1
+ORDER BY 2;
+
+
+
+
+
+ 
+
+
+
+
+.............................................................................................................
+
+
+
+
+
+
+/* Query 4:- What is the Average rental rate for each category? */
+
+
+SELECT
+  c.name AS category_name,
+  ROUND(AVG(f.rental_rate), 2) AS avg_rate,
+  NTILE(4) OVER (ORDER BY ROUND(AVG(f.rental_rate), 2)) AS standard_quartile
+FROM category c
+JOIN film_category fc
+  ON c.category_id = fc.category_id
+JOIN film f
+  ON fc.film_id = f.film_id
+GROUP BY 1;
+
+
+
+...............................................................................................................
