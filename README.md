@@ -34,11 +34,14 @@ Files Used
 The required files for running this program are:
 
 washington.csv
+
 new_york_city.csv
+
 chicago.csv
-You can download the files here.
+.
 
 Requirements
+
 This program was written in Python (version 3.7.1) and relies on the following libraries:
 
 pandas==0.23.4 numpy==1.15.4 Click==7.0
